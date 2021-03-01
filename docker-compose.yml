@@ -10,6 +10,6 @@ services:
     environment:
       - DB_PORT=1433
       - DB_PASSWORD=p@ssw0rd
-      - DB_NAME=source_extractor_engine
+      - SNMPDB=source_extractor_engine
       - DB_USER=sa
       - API_PORT=4044

@@ -9,7 +9,7 @@ class PollPreview:
         self.ip_list = prev_config['ip_list']
         self.community_string = prev_config['community_string']
         self.oid_list = prev_config['oid_list']
-        self.conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("DB_NAME"))
+        self.conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"))
 
     def get_oid_prev(self,device_model):
         oid_list = {"oid_list" :[]}

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-poller-deployment
+  namespace:  snmp-poller-namesace
+  labels:
+    app: api-poller
+spec:
+  volumes:
+  - name: docker-login
+    secret:
+      secretName: my-secret
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-poller
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: disabled
+      labels:
+        app: api-poller
+    spec:
+      containers:
+        - image: jlalmenanza/snmp_poller
+          imagePullPolicy: Always
+          name: api-poller-snmp
+          ports:
+            - containerPort: 4044
+          env:
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: DB_PORT
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: DB_PASSWORD
+            - name: SNMPDB
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: SNMPDB
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: DB_USER
+            - name: DB_CONN
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: DB_CONN
+            - name: API_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: API_PORT
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi

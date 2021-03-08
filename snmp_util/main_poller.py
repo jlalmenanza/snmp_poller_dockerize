@@ -2,7 +2,7 @@ from snmp_util.reference.main_device_info import main_device_info
 from snmp_util.reference.main_device_details import main_device_details
 from utils.database_util import DatabaseUtil
 import snmp_util.resources.sql_utils as sql_utils
-
+import requests
 import datetime
 import multiprocessing
 import os
@@ -78,6 +78,19 @@ class start_polling:
             return ip_list
         else:
             return (False)
+    
+    def push_to_normalize(self, source):
+        try:
+            payload = {
+                'user': os.environ.get("DB_USER"),
+                'password': os.environ.get("DB_PASSWORD"), 
+                'dbname': os.environ.get("SNMPDB"), 
+                'host': os.environ.get("DB_CONN"), 
+                'port': os.environ.get("SNMP_DB_PORT"), 
+                'table_name': source};
+            resp = requests.put(os.environ.get("NORMALIZE_API"), json=payload, verify=False, timeout=5)
+        except Exception as error:
+            print(error)
 
     def insert_update(self,device_detail,table_name):
         ip_address = device_detail['ip_address']
@@ -97,15 +110,16 @@ class start_polling:
         self.logger.log('Device Polled: {0}'.format(ip_address), 'INFO')
 
         try:
-            call_proc = '''DECLARE @ErrorMsg NVARCHAR(MAX)
-                        EXEC normalize_snmp_data @worker_table = '%s' ,@error_message = @ErrorMsg output
-                        Select @ErrorMsg
-                        GO''' % table_name
-            result = self.conn.call_proc(call_proc)
-            if result[0][0] and result[0][0] is not None:
-                self.logger.log('An error has occured while executing stored procedure: {0}'.format(result[0][0]), 'CRITICAL')
-                # self.update_worker_status(-1)
-                # sys.exit()
+            self.push_to_normalize(table_name)
+            # call_proc = '''DECLARE @ErrorMsg NVARCHAR(MAX)
+            #             EXEC normalize_snmp_data @worker_table = '%s' ,@error_message = @ErrorMsg output
+            #             Select @ErrorMsg
+            #             GO''' % table_name
+            # result = self.conn.call_proc(call_proc)
+            # if result[0][0] and result[0][0] is not None:
+            #     self.logger.log('An error has occured while executing stored procedure: {0}'.format(result[0][0]), 'CRITICAL')
+            #     # self.update_worker_status(-1)
+            #     # sys.exit()
         except Exception as err:
             self.logger.log('An error has occured while executing stored procedure: {0}'.format(err), 'CRITICAL')
             # self.update_worker_status(-1)
@@ -189,6 +203,7 @@ class start_polling:
                             update_query = update_util.format(table_name,ip_address)
                             self.conn.update_query(update_query)
                             self.logger.log("[{0}] : No SNMP response for {1}".format(poll_name , ip_address))
+                            self.push_to_normalize(table_name)
                             # try:
                             #     call_proc = '''DECLARE @ErrorMsg NVARCHAR(MAX)
                             #                 EXEC normalize_snmp_data @worker_table = '%s' ,@error_message = @ErrorMsg output

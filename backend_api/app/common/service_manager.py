@@ -14,8 +14,7 @@ class ServiceManager():
             # subprocess.Popen(["cd", "{0}/{1}".format(str(os.getcwd()), self.module_name), "&&", 
             #     str(file_name), str(id)], shell=True)
             path = "%s/%s" % (str(os.getcwd()),str(file_name))
-            subprocess.Popen(["python",
-                path, str(id)], shell=False)
+            subprocess.Popen(["python", path, str(id)], shell=False)
             return True
         except Exception as err:
             logger.log("Encountered error : %s" % (err), log_type='ERROR')

@@ -58,7 +58,7 @@ class PollerService(Resource):
                 return {'message': "ID doesn't exist", "type": "ReferenceError"}, 422
 
             check_service = self.service.check_service(pid=get_poller_service[0]['pid'], file_name='poller.py')
-            if 'image name' in str(check_service.decode("utf-8")).lower():
+            if check_service:
                 logger.log("Encountered error on poller service: Poller service is already running", log_type='ERROR')
                 return {'message': "Poller service is already running", "type": "ServiceError"}, 422
             else:

@@ -9,7 +9,7 @@ class PollPreview:
         self.ip_list = prev_config['ip_list']
         self.community_string = prev_config['community_string']
         self.oid_list = prev_config['oid_list']
-        self.conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"))
+        self.conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"),os.environ.get("SNMP_DB_PORT"))
 
     def get_oid_prev(self,device_model):
         oid_list = {"oid_list" :[]}
@@ -34,6 +34,8 @@ class PollPreview:
                 main_data.append(mdd_output)
             return main_data
         except Exception as err:
+            print("err-----------------------------------")
+            print(err)
             raise ValueError("Invalid device model or oid list")
           
 

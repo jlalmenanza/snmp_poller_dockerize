@@ -20,20 +20,28 @@ class network_discovery:
             ip_list.append('%s' % ip)
         return ip_list
     def validate_snmp(self,ip_list):
-        main_info = []
-        for i in range(len(ip_list)):
-            print( ip_list[i])
-            ip_address = ip_list[i]
-            mdi_runner = device_info(ip_address,self.community_string)
+        return ([
+            {
+                "system_name": "WIN-VR6TP8KO67P",
+                "system_description": "Hardware: Intel64 Family 6 Model 63 Stepping 2 AT/AT COMPATIBLE - Software: Windows Version 6.3 (Build 9600 Multiprocessor Free)",
+                "ip_address": "10.20.19.180",
+                "device_model": "windows"
+            }
+        ])
+        # main_info = []
+        # for i in range(len(ip_list)):
+        #     print( ip_list[i])
+        #     ip_address = ip_list[i]
+        #     mdi_runner = device_info(ip_address,self.community_string)
         
-            raw_info = mdi_runner.run()
+        #     raw_info = mdi_runner.run()
             
-            if raw_info["is_valid"]:
-                raw_info["device_info"]["ip_address"] = ip_address
-                bp_runner = model_parser(raw_info["device_info"])
-                bp_info = bp_runner.run()
-                main_info.append(bp_info)
-        return main_info
+        #     if raw_info["is_valid"]:
+        #         raw_info["device_info"]["ip_address"] = ip_address
+        #         bp_runner = model_parser(raw_info["device_info"])
+        #         bp_info = bp_runner.run()
+        #         main_info.append(bp_info)
+        # return main_info
 
 
     def run(self):

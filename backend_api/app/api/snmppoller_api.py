@@ -128,7 +128,7 @@ class SnmpPollerApi(Resource):
                 SchemaBuilder().create_data_retention(args['table_name'])
                
 
-                conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("DB_NAME"))
+                conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"),os.environ.get("SNMP_DB_PORT"))
                 query_string = 'INSERT INTO {0} (ip_address,system_description,device_model,system_name) values ({1})' .format(args['table_name'], '%(ip_address)s,%(system_description)s,%(device_model)s ,%(system_name)s')   
                 conn.insert_many_query(query_string, ip_list)
 

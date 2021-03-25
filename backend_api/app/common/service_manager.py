@@ -32,6 +32,7 @@ class ServiceManager():
             raise ValueError(ErrorObject(type="ServiceError", message="No tasks are running which match the specified criteria.").to_json())
 
     def check_service(self, pid=None, file_name=None):
+        status = False
         try:
             if pid is not None:
                 #PROD
@@ -39,13 +40,14 @@ class ServiceManager():
                 # tasklist = subprocess.check_output(['tasklist','/svc','/fi'
                 #     ,"ImageName eq {0}".format(file_name),'/fi',"pid eq %s" % pid])
                 #DEV
-
-                # tasklist = subprocess.check_output(['tasklist','/svc','/fi'
-                #     ,"ImageName eq python.exe",'/fi',"pid eq %s" % pid])
-
-                status = self.is_pid_running(pid)
+                # status = self.is_pid_running(pid)
+                result = subprocess.check_output(['ps', '--pid', str(pid)])
                 time.sleep(2)
-                return status
+                return result
+        except subprocess.CalledProcessError as called_error:
+            logger.log("Encountered error : %s" % (called_error.output), log_type='ERROR')
+            return status
+            # raise ValueError(ErrorObject(type="ServiceError", message="No tasks are running which match the specified criteria.").to_json())
         except Exception as err:
             logger.log("Encountered error : %s" % (err), log_type='ERROR')
             raise ValueError(ErrorObject(type="ServiceError", message="Encountered error while checking the service").to_json())

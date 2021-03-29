@@ -26,8 +26,9 @@ class PollerStatus(Resource):
 
         table_name = table_name.replace(' ', '')
         table_not_exists = self.db_utils.check_table_if_not_exist(table_name)
-
+    
         if not table_not_exists:
+           
             poller_tables = self.db_utils.model_session(SnmpPoller)
             tables = self.db_utils.filter_with_paginate(poller_tables, SnmpPoller, id=None, args=None)
             schema_option = self.api_utils.schema_options(self.snmp_poller_schema,'table_name')
@@ -37,12 +38,10 @@ class PollerStatus(Resource):
             if table_name in all_poller_tables:
                 args = self.api_utils.optional_parameters()
                 result = data_view(args, table_name)
-
                 all_dates = []
                 for poller in result:
-                    all_dates.append(str(poller['datetime']))
+                    all_dates.append(str(poller['datetime']).split(".")[0])
                     del poller['datetime']
-                
                 timestamp = sorted(
                     all_dates,
                     key = lambda d: datetime.strptime(d, '%Y-%m-%d %H:%M:%S'),  

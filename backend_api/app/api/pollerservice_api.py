@@ -37,7 +37,7 @@ class PollerService(Resource):
                 logs = logs.order_by(SnmpPollerLogs.id.asc()).paginate(args['start'],args['limit'], False).items
                 logger.log("Retrieving data from poller logs with paginate : start %s and limit %s" % (args['start'], args['limit']))
             else:
-                logs = logs.order_by(SnmpPollerLogs.id.asc()).all()
+                logs = logs.order_by(SnmpPollerLogs.id.desc()).all()
                 logger.log("Retrieving data from poller logs. Status OK 200")
 
             logs_data = SnmpPollerLogsSchema(many=True).dump(logs)

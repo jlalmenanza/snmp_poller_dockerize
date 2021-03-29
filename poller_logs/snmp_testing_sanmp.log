@@ -1,0 +1,4 @@
+2021-03-12 09:18:55 - INFO - snmp_testing_sanmp (34) : [Testing_1] : No SNMP response for 10.20.19.180
+2021-03-12 09:18:59 - INFO - snmp_testing_sanmp (34) : Sleeping for 300(sec/s)
+2021-03-12 09:18:55 - INFO - snmp_testing_sanmp (34) : [Testing_1] : No SNMP response for 10.20.19.180
+2021-03-12 09:18:59 - INFO - snmp_testing_sanmp (34) : Sleeping for 300(sec/s)

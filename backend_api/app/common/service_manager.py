@@ -22,8 +22,11 @@ class ServiceManager():
 
     def stop_service(self, pid=None):
         try:
-            process = subprocess.check_output(["kill", "-9" ,str(pid)])
-            return "SUCCESS: The process with PID %s has been terminated." % (str(pid))
+            if pid is not 0:
+                process = subprocess.check_output(["kill", "-9" ,str(pid)])
+                return "SUCCESS: The process with PID %s has been terminated." % (str(pid))
+            else:
+                raise ValueError(ErrorObject(type="ServiceError", message="No tasks are running which match the specified criteria.").to_json())
         except subprocess.CalledProcessError as called_error:
             logger.log("Encountered error : %s" % (called_error.output), log_type='ERROR')
             raise ValueError(ErrorObject(type="ServiceError", message="No tasks are running which match the specified criteria.").to_json())
@@ -40,10 +43,10 @@ class ServiceManager():
                 # tasklist = subprocess.check_output(['tasklist','/svc','/fi'
                 #     ,"ImageName eq {0}".format(file_name),'/fi',"pid eq %s" % pid])
                 #DEV
-                # status = self.is_pid_running(pid)
-                result = subprocess.check_output(['ps', '--pid', str(pid)])
-                time.sleep(2)
-                return result
+                time.sleep(5)
+                status = self.is_pid_running(pid)
+                # result = subprocess.check_output(['ps', '--pid', str(pid)])
+                return status
         except subprocess.CalledProcessError as called_error:
             logger.log("Encountered error : %s" % (called_error.output), log_type='ERROR')
             return status
@@ -57,9 +60,12 @@ class ServiceManager():
         services = ['poller.py']
         # check if pid exists
         if psutil.pid_exists(pid):
-            process = psutil.Process(pid)
-            if process.name() == 'python' and (process.cmdline()[1] and process.cmdline()[1] in services):
-                return True
+            # process = psutil.Process(pid)
+            # if process.name() == 'python' and (process.cmdline()[1] and process.cmdline()[1] in services):
+            return True
+        else:
+            return False
+
         
         # if pid does not exist, check if command exists
         # for process in psutil.process_iter():
@@ -71,7 +77,6 @@ class ServiceManager():
         #     except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
         #         pass
 
-        return False
 
     def restart_service(self, data, file):
         try:

@@ -29,8 +29,8 @@ class SchemaBuilder(DatabaseUtils):
 
         if show_datetime:
             if default_date:
-                datetime = 'datetime timestamp DEFAULT NOW(),'
-                columns.append('datetime timestamp DEFAULT NOW()')
+                datetime = "datetime timestamp  without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),"
+                columns.append("datetime timestamp  without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),")
             else:
                 datetime = 'datetime timestamp,'
                 columns.append('datetime timestamp')
